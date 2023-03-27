@@ -1,0 +1,13 @@
+name: Vampires
+author: Unbreathable (FJ Open Source)
+main: com.fajurion.vampires.Vampires
+version: 0.1
+api-version: 1.19
+softdepend:
+  - ServerCore
+depend:
+  - Multiverse-Core
+
+commands:
+  set:
+  timer:
