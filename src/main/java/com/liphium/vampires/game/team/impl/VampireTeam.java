@@ -35,29 +35,29 @@ public class VampireTeam extends Team {
         player.getInventory().setLeggings(new ItemStackBuilder(Material.NETHERITE_LEGGINGS).makeUnbreakable().buildStack());
 
         player.getInventory().addItem(new ItemStackBuilder(Material.BLAZE_ROD).makeUnbreakable()
-                .withName("§c§lCatcher").withLore(
-                        "§7§oWenn du mit diesem Item",
-                        "§7§oeinen Menschen 2-mal schlägst",
-                        "§7§owird er in den Kerker teleportiert.",
-                        "§7§oBeim in der Hand halten bekommst du",
-                        "§7§oSlowness I!")
+                .withName(Component.text("§c§lCatcher")).withLore(
+                        Component.text("§7§oWenn du mit diesem Item"),
+                        Component.text("§7§oeinen Menschen 2-mal schlägst"),
+                        Component.text("§7§owird er in den Kerker teleportiert."),
+                        Component.text("§7§oBeim in der Hand halten bekommst du"),
+                        Component.text("§7§oSlowness I!"))
                 .addEnchantment(Enchantment.KNOCKBACK, 2).buildStack());
 
         player.getInventory().addItem(new ItemStackBuilder(Material.FEATHER).makeUnbreakable()
-                .withName("§c§lDash").withLore(
-                        "§7§oWenn du mit diesem Item",
-                        "§7§orechtsklickst wirst du 5 Blöcke",
-                        "§7§onach vorne geschleudert.")
+                .withName(Component.text("§c§lDash")).withLore(
+                        Component.text("§7§oWenn du mit diesem Item"),
+                        Component.text("§7§orechtsklickst wirst du 5 Blöcke"),
+                        Component.text("§7§onach vorne geschleudert."))
                 .buildStack());
 
-        player.getInventory().addItem(new ItemStackBuilder(Material.CROSSBOW).withName("§c§lCrossbow")
-                .withLore("§7§oWenn du mit diesem Crossbow",
-                        "§7§oeine Fackel oder Maschine der",
-                        "§7§oMenschen abschießt, wird sie zerstört!")
+        player.getInventory().addItem(new ItemStackBuilder(Material.CROSSBOW).withName(Component.text("§c§lCrossbow"))
+                .withLore(Component.text("§7§oWenn du mit diesem Crossbow"),
+                        Component.text("§7§oeine Fackel oder Maschine der"),
+                        Component.text("§7§oMenschen abschießt, wird sie zerstört!"))
                 .makeUnbreakable().buildStack());
 
-        ItemStack rocket = new ItemStackBuilder(Material.FIREWORK_ROCKET).withName("§c§lRakete")
-                .withLore("§7§oMunition für den Crossbow.").buildStack();
+        ItemStack rocket = new ItemStackBuilder(Material.FIREWORK_ROCKET).withName(Component.text("§c§lRakete"))
+                .withLore(Component.text("§7§oMunition für den Crossbow.")).buildStack();
         FireworkMeta meta = (FireworkMeta) rocket.getItemMeta();
         meta.setPower(3);
         meta.addEffect(FireworkEffect.builder().withColor(Color.RED).build());

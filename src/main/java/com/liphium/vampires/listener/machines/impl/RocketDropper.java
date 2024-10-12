@@ -23,9 +23,8 @@ public class RocketDropper extends Machine {
         stand = location.getWorld().spawn(location.clone().add(0, -1.5, 0), ArmorStand.class);
 
         stand.setCustomNameVisible(true);
-        stand.customName(Component.text("Hier werden ", NamedTextColor.GRAY)
-                .append(Component.text("Raketen ", NamedTextColor.RED))
-                .append(Component.text("hergestellt.", NamedTextColor.GRAY)));
+        stand.customName(Component.text("Rockets", NamedTextColor.RED).appendSpace()
+                .append(Component.text("are produced here.", NamedTextColor.GRAY)));
         stand.setGravity(false);
         stand.setInvisible(true);
         stand.setInvulnerable(true);
@@ -42,9 +41,9 @@ public class RocketDropper extends Machine {
             tickCount = 0;
 
             count--;
-            stand.customName(Component.text("Rakete ", NamedTextColor.RED)
-                    .append(Component.text("in ", NamedTextColor.GRAY))
-                    .append(Component.text(count, NamedTextColor.RED, TextDecoration.BOLD))
+            stand.customName(Component.text("Rocket", NamedTextColor.RED).appendSpace()
+                    .append(Component.text("in", NamedTextColor.GRAY)).appendSpace()
+                    .append(Component.text(count, NamedTextColor.RED, TextDecoration.BOLD)).appendSpace()
                     .append(Component.text("..", NamedTextColor.GRAY))
             );
 
@@ -64,7 +63,7 @@ public class RocketDropper extends Machine {
 
     @Override
     public void onBreak() {
-        stand.customName(Component.text("Zerstört", NamedTextColor.RED, TextDecoration.ITALIC));
+        stand.customName(Component.text("Destroyed", NamedTextColor.RED, TextDecoration.ITALIC));
     }
 
     @Override

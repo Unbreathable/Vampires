@@ -76,7 +76,6 @@ public class MachineManager {
 
     public Machine newMachineByItemName(String name, Location location) {
         return switch (name) {
-            case "Charger" -> new Charger(location);
             case "RocketDropper" -> new RocketDropper(location);
             case "TorchDropper" -> new TorchDropper(location);
             case "BeetrootDropper" -> new BeetrootDropper(location);

@@ -18,10 +18,6 @@ public class SetCommand implements CommandExecutor {
 
             if (args.length == 0) {
                 player.sendMessage(Component.text("§c/set <name> §8-> §7Setzt eine Position."));
-                if (Bukkit.getWorld("vampires") != null) {
-                    player.teleport(LocationAPI.getLocation("Camp"));
-                    player.sendMessage(Component.text("§cwhat da hell"));
-                }
             } else {
                 LocationAPI.setLocation(args[0], player.getLocation());
                 player.sendMessage(Vampires.PREFIX.append(Component.text("§cPosition §7gesetzt.")));

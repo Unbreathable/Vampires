@@ -32,7 +32,7 @@ public class BrewingScreen extends CScreen {
 
             // Build potion
             ItemStack itemStack = new ItemStackBuilder(Material.LINGERING_POTION)
-                    .withName("§c§l" + data.name() + " §7Potion").buildStack();
+                    .withName(Component.text("§c§l" + data.name() + " §7Potion")).buildStack();
             PotionMeta meta = (PotionMeta) itemStack.getItemMeta();
             meta.setBasePotionType(data);
             itemStack.setItemMeta(meta);

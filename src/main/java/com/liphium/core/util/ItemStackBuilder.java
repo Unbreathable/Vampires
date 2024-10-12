@@ -1,5 +1,6 @@
 package com.liphium.core.util;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -11,6 +12,7 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -29,8 +31,8 @@ public class ItemStackBuilder {
     private short durability = 0; // id -> 324:2 <- durability
 
     // Meta
-    private String name = null;
-    private List<String> lore = null;
+    private Component name = null;
+    private List<Component> lore = null;
 
     // Features
     private boolean unbreakable = false;
@@ -48,12 +50,6 @@ public class ItemStackBuilder {
 
     public ItemStackBuilder(Material material) {
         this.material = material;
-    }
-
-    // Utility methods for smooth and extensive color parsing
-    private static String parseColor(String string) {
-        string = parseColorAmp(string);
-        return ChatColor.translateAlternateColorCodes('&', string);
     }
 
     private static String parseColorAmp(String string) {
@@ -83,19 +79,19 @@ public class ItemStackBuilder {
         return withData((short) data);
     }
 
-    public ItemStackBuilder withName(String name) {
+    public ItemStackBuilder withName(Component name) {
         this.name = name;
         return this;
     }
 
     // Multiple ways you can set the lore
     // I prefer #withLore("&1Line 1", "&2Line 2", "&3Etc...")
-    public ItemStackBuilder withLore(List<String> lines) {
+    public ItemStackBuilder withLore(List<Component> lines) {
         this.lore = lines;
         return this;
     }
 
-    public ItemStackBuilder withLore(String... lines) {
+    public ItemStackBuilder withLore(Component... lines) {
         return withLore(Arrays.asList(lines));
     }
 
@@ -158,11 +154,11 @@ public class ItemStackBuilder {
         // Meta
         // Set displayname if name is not null
         if (name != null) {
-            itemMeta.setDisplayName(ItemStackBuilder.parseColor(name));
+            itemMeta.displayName(name);
         }
         // Set lore if it is not null nor empty
         if (lore != null && !lore.isEmpty()) {
-            itemMeta.setLore(lore.stream().map(ItemStackBuilder::parseColor).collect(Collectors.toList()));
+            itemMeta.lore(lore);
         }
         // Add enchantments if any
         if (enchantments != null && !enchantments.isEmpty()) {

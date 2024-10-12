@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 public class TaskManager {
 
-    private ArrayList<Runnable> runnables = new ArrayList<>();
-    private ArrayList<Runnable> toRemove = new ArrayList<>();
+    private final ArrayList<Runnable> runnables = new ArrayList<>();
+    private final ArrayList<Runnable> toRemove = new ArrayList<>();
 
     public void initTask() {
 

@@ -3,6 +3,8 @@ package com.liphium.vampires.listener.machines.impl;
 import com.liphium.core.util.ItemStackBuilder;
 import com.liphium.vampires.listener.machines.Machine;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -17,7 +19,8 @@ public class TorchDropper extends Machine {
         stand = location.getWorld().spawn(location.clone().add(0, -1.5, 0), ArmorStand.class);
 
         stand.setCustomNameVisible(true);
-        stand.customName(Component.text("§7Hier werden §cFackeln §7hergestellt."));
+        stand.customName(Component.text("Torches", NamedTextColor.GOLD).appendSpace()
+                .append(Component.text("are produced here.", NamedTextColor.GRAY)));
         stand.setGravity(false);
         stand.setInvisible(true);
         stand.setInvulnerable(true);
@@ -34,8 +37,10 @@ public class TorchDropper extends Machine {
             tickCount = 0;
 
             count--;
-            stand.customName(Component.text("§cFackel §7in §c§l" + count + "§7.."));
-
+            stand.customName(Component.text("Torch", NamedTextColor.GOLD).appendSpace()
+                    .append(Component.text("in", NamedTextColor.GRAY)).appendSpace()
+                    .append(Component.text(count, NamedTextColor.GOLD, TextDecoration.BOLD)).appendSpace()
+                    .append(Component.text("..", NamedTextColor.GRAY)));
             if (count == 0) {
                 count = 11;
                 location.getWorld().dropItem(location, new ItemStackBuilder(Material.TORCH).buildStack());
@@ -45,7 +50,7 @@ public class TorchDropper extends Machine {
 
     @Override
     public void onBreak() {
-        stand.customName(Component.text("§c§oZerstört"));
+        stand.customName(Component.text("Destroyed", NamedTextColor.RED, TextDecoration.ITALIC));
     }
 
     @Override

@@ -15,20 +15,14 @@ import com.liphium.vampires.util.TaskManager;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.WorldCreator;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
 
 public final class Vampires extends JavaPlugin {
     public static final Component PREFIX = Component.text("[", NamedTextColor.DARK_GRAY)
             .append(Component.text("Vampires", NamedTextColor.RED))
             .append(Component.text("]", NamedTextColor.DARK_GRAY))
             .append(Component.text(" "));
-    public static final Component S_BRACKET = Component.text("[", NamedTextColor.DARK_GRAY);
-    public static final Component E_BRACKET = Component.text("]", NamedTextColor.DARK_GRAY);
 
     private static Vampires instance;
     private MultiverseCore core;

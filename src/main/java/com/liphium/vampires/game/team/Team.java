@@ -1,6 +1,8 @@
 package com.liphium.vampires.game.team;
 
 import com.liphium.vampires.Vampires;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -38,14 +40,14 @@ public class Team {
         return players;
     }
 
-    public ArrayList<String> playerLore() {
-        ArrayList<String> lore = new ArrayList<>();
+    public ArrayList<Component> playerLore() {
+        ArrayList<Component> lore = new ArrayList<>();
 
         if (players.isEmpty()) {
-            lore.add("§7Click to join!");
+            lore.add(Component.text("Click to join!", NamedTextColor.GRAY));
         } else {
             for (Player player : players) {
-                lore.add("§7- " + cc.substring(0, 2) + player.getName());
+                lore.add(Component.text("§7- " + cc.substring(0, 2) + player.getName()));
             }
         }
 

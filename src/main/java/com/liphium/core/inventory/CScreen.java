@@ -46,6 +46,10 @@ public abstract class CScreen {
     public void init(Player player) {
     }
 
+    public void init(Player player, Inventory inventory) {
+
+    }
+
     public Component title(Player player) {
         return title;
     }
@@ -54,9 +58,15 @@ public abstract class CScreen {
     }
 
     public void background() {
-        ItemStack stack = new ItemStackBuilder(Material.BLACK_STAINED_GLASS_PANE).withName("§r").buildStack();
+        ItemStack stack = new ItemStackBuilder(Material.BLACK_STAINED_GLASS_PANE).withName(Component.text("§r")).buildStack();
         for (int i = 0; i < 9; i++) setItem(i, new CItem(stack).notClickable());
         for (int i = rows * 9 - 9; i < rows * 9; i++) setItem(i, new CItem(stack).notClickable());
+    }
+
+    public void background(Player player) {
+        ItemStack stack = new ItemStackBuilder(Material.BLACK_STAINED_GLASS_PANE).withName(Component.text("§r")).buildStack();
+        for (int i = 0; i < 9; i++) setItemNotCached(player, i, new CItem(stack).notClickable());
+        for (int i = rows * 9 - 9; i < rows * 9; i++) setItemNotCached(player, i, new CItem(stack).notClickable());
     }
 
     public Inventory buildInventory(Player player) {
@@ -66,12 +76,14 @@ public abstract class CScreen {
 
         Inventory inventory = Bukkit.createInventory(null, rows * 9, title(player));
 
+        if (!cache) {
+            // Clear all the custom items when the thing is not cached
+            customItems.remove(player);
+        }
         init(player);
+        init(player, inventory);
         for (Map.Entry<Integer, CItem> entry : customItems.getOrDefault(player, new HashMap<>()).entrySet()) {
             inventory.setItem(entry.getKey(), entry.getValue().getStack());
-            if (!cache) {
-                setItemNotCached(player, entry.getKey(), entry.getValue());
-            }
         }
 
         if (cache) {

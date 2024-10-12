@@ -25,7 +25,7 @@ public class TeamSelectionScreen extends CScreen {
             int slot = team.getName().equals("Vampires") ? 10 : 16;
 
             setItem(slot, new CItem(new ItemStackBuilder(team.getMaterial()).withLore(team.playerLore())
-                    .withName(team.getCc() + team.getName()).buildStack())
+                    .withName(Component.text(team.getCc() + team.getName())).buildStack())
                     .onClick(event -> click(team, event)));
         }
     }

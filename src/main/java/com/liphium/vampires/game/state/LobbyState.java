@@ -158,8 +158,8 @@ public class LobbyState extends GameState {
         player.getInventory().setLeggings(null);
         player.getInventory().setBoots(null);
 
-        player.getInventory().setItem(4, new ItemStackBuilder(Material.SADDLE).withName("§c§lTeams §7(Right-click)")
-                .withLore("§7§oBetrete ein Team.").buildStack());
+        player.getInventory().setItem(4, new ItemStackBuilder(Material.SADDLE).withName(Component.text("§c§lTeams §7(Right-click)"))
+                .withLore(Component.text("§7§oBetrete ein Team.")).buildStack());
 
         player.teleport(LocationAPI.getLocation("Camp"));
     }
