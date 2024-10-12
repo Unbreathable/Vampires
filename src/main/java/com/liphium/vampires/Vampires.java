@@ -10,6 +10,7 @@ import com.liphium.vampires.listener.JoinQuitListener;
 import com.liphium.vampires.listener.machines.Machine;
 import com.liphium.vampires.listener.machines.MachineManager;
 import com.liphium.vampires.screens.BrewingScreen;
+import com.liphium.vampires.screens.ItemShopScreen;
 import com.liphium.vampires.screens.TeamSelectionScreen;
 import com.liphium.vampires.util.TaskManager;
 import com.onarandombox.MultiverseCore.MultiverseCore;
@@ -58,7 +59,7 @@ public final class Vampires extends JavaPlugin {
         getCommand("set").setExecutor(new SetCommand());
         getCommand("timer").setExecutor(new TimerCommand());
 
-        Core.getInstance().getScreens().register(new TeamSelectionScreen(), new BrewingScreen());
+        Core.getInstance().getScreens().register(new TeamSelectionScreen(), new BrewingScreen(), new ItemShopScreen());
     }
 
     @Override

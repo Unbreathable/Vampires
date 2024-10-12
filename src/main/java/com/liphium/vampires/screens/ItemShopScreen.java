@@ -20,7 +20,7 @@ import java.util.Map;
 public class ItemShopScreen extends CScreen {
 
     public ItemShopScreen() {
-        super(3, Component.text("Item shop", NamedTextColor.GOLD, TextDecoration.BOLD), 3, false);
+        super(3, Component.text("Item shop", NamedTextColor.GOLD, TextDecoration.BOLD), 4, false);
     }
 
     @Override
@@ -37,8 +37,29 @@ public class ItemShopScreen extends CScreen {
 
     public void openCategory(CClickEvent event, int id, Inventory inventory) {
         final ShopCategory category = ShopCategory.values()[id];
-        for (int i = 0; i < category.getItems().size(); i++) {
-            setItemNotCached(event.getPlayer(), 19 + i, category.getItems().get(i), inventory);
+        for (int i = 0; i < 9; i++) {
+            if (category.getItems().size() <= i) {
+                setItemNotCached(event.getPlayer(), 18 + i, ShopCategory.spacer(), inventory);
+            } else {
+                setItemNotCached(event.getPlayer(), 18 + i, category.getItems().get(i), inventory);
+            }
+        }
+    }
+
+    public static void removeAmountFromInventory(Player player, Material material, int amount) {
+        int count = amount;
+        for (ItemStack item : player.getInventory()) {
+            if (item != null && item.getType() == material) {
+                int sub = Math.min(item.getAmount(), count);
+                int newAmount = item.getAmount() - sub;
+                if (newAmount == 0) {
+                    item.setAmount(newAmount);
+                }
+                count -= sub;
+                if (count <= 0) {
+                    break;
+                }
+            }
         }
     }
 
@@ -126,16 +147,14 @@ public class ItemShopScreen extends CScreen {
         private static ItemStack item = new ItemStackBuilder(Material.BLACK_STAINED_GLASS_PANE).withName(Component.text("§r")).buildStack();
 
         public static CItem spacer() {
-            return new CItem(item);
+            return new CItem(item).notClickable();
         }
 
         public static CItem itemWithPrice(Material material, String name, NamedTextColor color, int price, int amount) {
-            final var stackBuilder = new ItemStackBuilder(material).withName(Component.text(name, color));
-
-            return new CItem(stackBuilder
+            return new CItem(new ItemStackBuilder(material).withName(Component.text(name, color))
                     .withLore(Component.text("Price: ", NamedTextColor.GRAY).append(Component.text(price, NamedTextColor.GOLD)))
                     .buildStack()
-            ).onClick(event -> buyFunction(event, stackBuilder.withAmount(amount).buildStack(), price));
+            ).onClick(event -> buyFunction(event, new ItemStackBuilder(material).withName(Component.text(name, color)).withAmount(amount).buildStack(), price));
         }
 
         public static CItem itemWithPriceCustom(Material material, String name, NamedTextColor color, int price, ItemStack sold) {
@@ -146,20 +165,22 @@ public class ItemShopScreen extends CScreen {
         }
 
         public static void buyFunction(CClickEvent event, ItemStack stack, int price) {
-            event.getPlayer().closeInventory();
-
             // Get the amount of pumpkins in the inventory
             int count = 0;
             for (ItemStack item : event.getPlayer().getInventory()) {
-                if (item.getType() == Material.CARVED_PUMPKIN) {
+                if (item != null && item.getType() == Material.CARVED_PUMPKIN) {
                     count += item.getAmount();
                 }
             }
 
             if (count < price) {
                 event.getPlayer().sendMessage(Vampires.PREFIX.append(Component.text("You don't have enough pumpkins to purchase this item.", NamedTextColor.RED)));
+                event.getPlayer().closeInventory();
                 return;
             }
+
+            // Remove the pumpkins from the players inventory
+            removeAmountFromInventory(event.getPlayer(), Material.CARVED_PUMPKIN, price);
 
             event.getPlayer().getInventory().addItem(stack);
         }

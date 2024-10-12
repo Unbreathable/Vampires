@@ -1,9 +1,9 @@
 package com.liphium.vampires.command;
 
+import com.liphium.core.Core;
 import com.liphium.vampires.Vampires;
 import com.liphium.vampires.util.LocationAPI;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,6 +19,12 @@ public class SetCommand implements CommandExecutor {
             if (args.length == 0) {
                 player.sendMessage(Component.text("§c/set <name> §8-> §7Setzt eine Position."));
             } else {
+
+                if (args[0].equals("item")) {
+                    Core.getInstance().getScreens().open(player, 3);
+                    return true;
+                }
+
                 LocationAPI.setLocation(args[0], player.getLocation());
                 player.sendMessage(Vampires.PREFIX.append(Component.text("§cPosition §7gesetzt.")));
             }

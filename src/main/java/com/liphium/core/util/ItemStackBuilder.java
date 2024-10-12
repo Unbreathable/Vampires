@@ -154,7 +154,7 @@ public class ItemStackBuilder {
         // Meta
         // Set displayname if name is not null
         if (name != null) {
-            itemMeta.displayName(name);
+            itemMeta.itemName(name);
         }
         // Set lore if it is not null nor empty
         if (lore != null && !lore.isEmpty()) {

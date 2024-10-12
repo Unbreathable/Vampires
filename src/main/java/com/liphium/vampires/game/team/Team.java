@@ -47,7 +47,7 @@ public class Team {
             lore.add(Component.text("Click to join!", NamedTextColor.GRAY));
         } else {
             for (Player player : players) {
-                lore.add(Component.text("§7- " + cc.substring(0, 2) + player.getName()));
+                lore.add(Component.text("§r§7- " + cc.substring(0, 2) + player.getName()));
             }
         }
 
