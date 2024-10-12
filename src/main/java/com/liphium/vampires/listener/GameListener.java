@@ -83,5 +83,4 @@ public class GameListener implements Listener {
 
         event.setCancelled(true);
     }
-
 }
