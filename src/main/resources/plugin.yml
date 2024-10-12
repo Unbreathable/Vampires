@@ -1,13 +1,15 @@
 name: Vampires
-author: Unbreathable (FJ Open Source)
-main: com.fajurion.vampires.Vampires
-version: 0.1
-api-version: 1.19
-softdepend:
-  - ServerCore
+version: '1.0-SNAPSHOT'
+main: com.liphium.vampires.Vampires
+api-version: '1.21'
 depend:
   - Multiverse-Core
 
 commands:
   set:
+    description: "Set a location for Vampires."
+    aliases: [ location ]
+    permission: vampires.admin
   timer:
+    description: "Manage the timer for Vampires."
+    permission: vampires.timer
