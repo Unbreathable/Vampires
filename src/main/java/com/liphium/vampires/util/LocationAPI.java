@@ -14,18 +14,13 @@ public class LocationAPI {
     private static final HashMap<String, Location> locations = new HashMap<>();
 
     public static void setLocation(String locationName, Location loc) {
-        Vampires.getInstance().getConfig().set(locationName + ".X", loc.getX());
-        Vampires.getInstance().getConfig().set(locationName + ".Y", loc.getY());
-        Vampires.getInstance().getConfig().set(locationName + ".Z", loc.getZ());
-        Vampires.getInstance().getConfig().set(locationName + ".Yaw", loc.getYaw());
-        Vampires.getInstance().getConfig().set(locationName + ".Pitch", loc.getPitch());
-        Vampires.getInstance().getConfig().set(locationName + ".World", loc.getWorld().getName());
+        Vampires.getInstance().getConfig().set(locationName, loc);
         Vampires.getInstance().saveConfig();
         locations.put(locationName, loc);
     }
 
     public static boolean exists(String locationName) {
-        return Vampires.getInstance().getConfig().isSet(locationName + ".X");
+        return Vampires.getInstance().getConfig().isSet(locationName);
     }
 
     /**
@@ -47,19 +42,15 @@ public class LocationAPI {
             return locations.get(locationName);
         }
 
-        // Get all the values of the location from the config
-        double x = Vampires.getInstance().getConfig().getDouble(locationName + ".X");
-        double y = Vampires.getInstance().getConfig().getDouble(locationName + ".Y");
-        double z = Vampires.getInstance().getConfig().getDouble(locationName + ".Z");
-        float yaw = (float) Vampires.getInstance().getConfig().getDouble(locationName + ".Yaw");
-        float pitch = (float) Vampires.getInstance().getConfig().getDouble(locationName + ".Pitch");
-
         // Make the location
-        Location loc = new Location(Bukkit.getWorld("vampires"), x, y, z, yaw, pitch);
+        Location location = Vampires.getInstance().getConfig().getLocation(locationName);
+
+        if (location != null)
+            location.setWorld(Bukkit.getWorld("vampires"));
 
         // Cache the location for use in the future
-        locations.put(locationName, loc);
-        return loc;
+        locations.put(locationName, location);
+        return location;
     }
 
 }
