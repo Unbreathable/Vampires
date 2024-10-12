@@ -43,6 +43,11 @@ public abstract class CScreen {
         customItems.put(player, items);
     }
 
+    public void setItemNotCached(Player player, int slot, CItem item, Inventory inventory) {
+        setItemNotCached(player, slot, item);
+        inventory.setItem(slot, item.getStack());
+    }
+
     public void init(Player player) {
     }
 

@@ -38,8 +38,7 @@ public class ItemShopScreen extends CScreen {
     public void openCategory(CClickEvent event, int id, Inventory inventory) {
         final ShopCategory category = ShopCategory.values()[id];
         for (int i = 0; i < category.getItems().size(); i++) {
-            setItemNotCached(event.getPlayer(), 19 + i, category.getItems().get(i));
-            inventory.setItem(19 + i, category.getItems().get(i).getStack());
+            setItemNotCached(event.getPlayer(), 19 + i, category.getItems().get(i), inventory);
         }
     }
 
