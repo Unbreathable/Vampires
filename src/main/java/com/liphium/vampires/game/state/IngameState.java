@@ -27,6 +27,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -120,18 +121,22 @@ public class IngameState extends GameState {
         }
 
         if (event.getItem() != null) {
-
-            if (event.getItem().getType().equals(Material.BEETROOT) && event.getClickedBlock() != null) {
+            ItemStack usedItem = event.getItem();
+            if (usedItem.getType().equals(Material.BEETROOT) && event.getClickedBlock() != null) {
                 beetroots.add(new BeetrootData(event.getClickedBlock().getLocation().clone().add(0.5, 1, 0.5)));
 
                 int amount = event.getPlayer().getInventory().getItemInMainHand().getAmount();
                 if (amount == 1) {
                     event.getPlayer().getInventory().setItemInMainHand(null);
                 } else event.getPlayer().getInventory().getItemInMainHand().setAmount(amount - 1);
-            } else if (event.getItem().getType().equals(Material.FEATHER) && event.getPlayer().getCooldown(Material.FEATHER) <= 0) {
+            } else if (usedItem.getType().equals(Material.FEATHER) && event.getPlayer().getCooldown(Material.FEATHER) <= 0) {
 
                 event.getPlayer().setVelocity(event.getPlayer().getLocation().getDirection().normalize().multiply(event.getPlayer().isOnGround() ? 1.8 : 1.1));
                 event.getPlayer().setCooldown(Material.FEATHER, 200);
+            } else if (usedItem.getType().equals(Material.WIND_CHARGE) && event.getPlayer().isSneaking()) {
+                event.getPlayer().getNearbyEntities(3, 3, 3).stream()
+                        .filter(entity -> event.getPlayer().hasLineOfSight(entity))
+                        .forEach(entity -> entity.setVelocity(event.getPlayer().getLocation().getDirection().normalize().multiply(4)));
             }
         }
     }
