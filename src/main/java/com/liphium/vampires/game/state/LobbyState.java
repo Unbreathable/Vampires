@@ -108,25 +108,25 @@ public class LobbyState extends GameState {
 
                         } else if (count % 10 == 0 && count <= 100) {
                             Bukkit.broadcast(Vampires.PREFIX
-                                    .append(Component.text("Das ", NamedTextColor.GRAY))
-                                    .append(Component.text("Spiel ", NamedTextColor.RED))
-                                    .append(Component.text("startet in ", NamedTextColor.GRAY))
-                                    .append(Component.text(count + " Sekunden", NamedTextColor.RED))
+                                    .append(Component.text("The ", NamedTextColor.GRAY))
+                                    .append(Component.text("game ", NamedTextColor.RED))
+                                    .append(Component.text("starts in ", NamedTextColor.GRAY))
+                                    .append(Component.text(count + " seconds", NamedTextColor.RED))
                                     .append(Component.text(".", NamedTextColor.GRAY))
                             );
                         }
 
                         if (paused) {
                             Messages.actionBar(Component.text("Countdown ", NamedTextColor.GRAY)
-                                    .append(Component.text("pausiert", NamedTextColor.RED)));
+                                    .append(Component.text("paused", NamedTextColor.RED)));
                         } else {
                             Messages.actionBar(Component.text(count, NamedTextColor.RED, TextDecoration.BOLD)
                                     .append(Component.text("..", NamedTextColor.GRAY)));
                         }
                     } else {
 
-                        Messages.actionBar(Component.text("Warten auf ", NamedTextColor.GRAY)
-                                .append(Component.text("Spieler", NamedTextColor.RED))
+                        Messages.actionBar(Component.text("Waiting for ", NamedTextColor.GRAY)
+                                .append(Component.text("players", NamedTextColor.RED))
                                 .append(Component.text(".. (", NamedTextColor.GRAY))
                                 .append(Component.text(Bukkit.getOnlinePlayers().size(), NamedTextColor.RED))
                                 .append(Component.text("/", NamedTextColor.GRAY))
@@ -165,7 +165,7 @@ public class LobbyState extends GameState {
         player.getInventory().setBoots(null);
 
         player.getInventory().setItem(4, new ItemStackBuilder(Material.SADDLE).withName(Component.text("§c§lTeams §7(Right-click)"))
-                .withLore(Component.text("§7§oBetrete ein Team.")).buildStack());
+                .withLore(Component.text("§7§oJoin a team.")).buildStack());
 
         player.teleport(LocationAPI.getLocation("Camp"));
     }

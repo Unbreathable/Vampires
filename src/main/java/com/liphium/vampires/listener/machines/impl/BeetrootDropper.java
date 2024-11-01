@@ -17,9 +17,9 @@ public class BeetrootDropper extends Machine {
     private final ArmorStand stand;
 
     public BeetrootDropper(Location location) {
-        super(location, false);
+        super(location, true);
 
-        stand = location.getWorld().spawn(location.clone().add(0, -1.5, 0), ArmorStand.class);
+        stand = location.getWorld().spawn(location.clone().add(0.5, -0.5, 0.5), ArmorStand.class);
 
         stand.setCustomNameVisible(true);
         stand.customName(Component.text("§cBlood garlic §7is produced here."));
@@ -47,7 +47,7 @@ public class BeetrootDropper extends Machine {
             if (count == 0) {
                 count = 30;
 
-                Item item = location.getWorld().dropItem(location, new ItemStack(Material.BEETROOT));
+                Item item = location.getWorld().dropItem(location.clone().add(0.5, 1.5, 0.5), new ItemStack(Material.BEETROOT));
                 item.setVelocity(new Vector());
             }
         }

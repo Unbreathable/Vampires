@@ -77,13 +77,12 @@ public class ItemShopScreen extends CScreen {
                         .buildStack(),
                 List.of(
                         itemWithPrice(Material.FEATHER, "Dash", NamedTextColor.RED, 5, 1),
-                        itemWithPrice(Material.BLAZE_ROD, "Instant catcher", NamedTextColor.RED, 10, 1),
                         spacer(),
                         itemWithPrice(Material.LEATHER, "Leather", NamedTextColor.RED, 1, 1),
                         itemWithPrice(Material.IRON_INGOT, "Iron ingot", NamedTextColor.RED, 3, 1),
                         itemWithPrice(Material.DIAMOND, "Diamond", NamedTextColor.RED, 7, 1),
                         spacer(),
-                        itemWithPrice(Material.GOLD_BLOCK, "Golden apple dropper", NamedTextColor.RED, 20, 1),
+                        itemWithPrice(Material.GOLD_BLOCK, "Golden Apple dropper", NamedTextColor.RED, 20, 1),
                         itemWithPrice(Material.REDSTONE_LAMP, "Rocket dropper", NamedTextColor.RED, 30, 1)
                 )
         ),
@@ -99,7 +98,7 @@ public class ItemShopScreen extends CScreen {
                         itemWithPrice(Material.DIAMOND, "Diamond", NamedTextColor.GREEN, 10, 1),
                         itemWithPrice(Material.MACE, "Mace", NamedTextColor.WHITE, 25, 1),
                         spacer(),
-                        itemWithPrice(Material.RED_WOOL, "Blood garlic dropper", NamedTextColor.GREEN, 20, 1),
+                        itemWithPrice(Material.RED_WOOL, "Blood Garlic dropper", NamedTextColor.GREEN, 20, 1),
                         itemWithPrice(Material.BEACON, "Torch dropper", NamedTextColor.GREEN, 30, 1)
                 )
         ),
@@ -120,7 +119,7 @@ public class ItemShopScreen extends CScreen {
                 )
         ),
         BUILDING(
-                new ItemStackBuilder(Material.REDSTONE)
+                new ItemStackBuilder(Material.STONE)
                         .withName(Component.text("Building", NamedTextColor.GOLD, TextDecoration.BOLD))
                         .withLore(Component.text("Upgrade your base.", NamedTextColor.GRAY))
                         .buildStack(),

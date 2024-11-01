@@ -23,9 +23,9 @@ public class Brewer extends Machine {
     private final ArmorStand stand;
 
     public Brewer(Location location) {
-        super(location, false);
+        super(location, true);
 
-        stand = location.getWorld().spawn(location.clone().add(0, -2, 0), ArmorStand.class);
+        stand = location.getWorld().spawn(location.clone().add(0.5, -0.5, 0.5), ArmorStand.class);
 
         stand.setCustomNameVisible(true);
         stand.customName(Component.text("Click the", NamedTextColor.GRAY).appendSpace()
@@ -63,7 +63,7 @@ public class Brewer extends Machine {
                             .append(Component.text("brewing stand", NamedTextColor.GOLD))
                             .append(Component.text(".", NamedTextColor.GRAY)));
                     count = 60;
-                    location.getWorld().dropItem(location.clone().add(0, 1.5, 0), currentPotion);
+                    location.getWorld().dropItem(location.clone().add(0.5, 1, 0.5), currentPotion);
                     currentPotion = null;
                 }
             }
@@ -90,7 +90,7 @@ public class Brewer extends Machine {
     @Override
     public void onInteract(PlayerInteractEvent event) {
         if (event.getClickedBlock() != null && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            if (!event.getClickedBlock().equals(location.clone().add(0, -1.5, 0).getBlock())) return;
+            if (!event.getClickedBlock().equals(location.getBlock())) return;
 
             Core.getInstance().getScreens().open(event.getPlayer(), 2);
             clickedBrewer.put(event.getPlayer(), this);
@@ -98,7 +98,7 @@ public class Brewer extends Machine {
         }
     }
 
-    final public static HashMap<Player, Brewer> clickedBrewer = new HashMap<Player, Brewer>();
+    final public static HashMap<Player, Brewer> clickedBrewer = new HashMap<>();
 
     @Override
     public void onInteractAtEntity(PlayerInteractAtEntityEvent event) {

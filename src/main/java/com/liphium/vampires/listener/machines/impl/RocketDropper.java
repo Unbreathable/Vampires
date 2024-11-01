@@ -20,9 +20,9 @@ public class RocketDropper extends Machine {
     private final ArmorStand stand;
 
     public RocketDropper(Location location) {
-        super(location, false);
+        super(location, true);
 
-        stand = location.getWorld().spawn(location.clone().add(0, -1.5, 0), ArmorStand.class);
+        stand = location.getWorld().spawn(location.clone().add(0.5, -0.5, 0.5), ArmorStand.class);
 
         stand.setCustomNameVisible(true);
         stand.customName(Component.text("Rockets", NamedTextColor.RED).appendSpace()
@@ -58,7 +58,7 @@ public class RocketDropper extends Machine {
                 meta.addEffect(FireworkEffect.builder().withColor(Color.RED).build());
                 rocket.setItemMeta(meta);
 
-                Item item = location.getWorld().dropItem(location, rocket);
+                Item item = location.getWorld().dropItem(location.clone().add(0.5, 1.5, 0.5), rocket);
                 item.setVelocity(new Vector());
             }
         }

@@ -70,7 +70,7 @@ public class MachineManager {
 
     public Machine newMachineByLocation(String name, Location location) {
         return switch (name) {
-            case "PumpkinDropper" -> new PumpkinDropper(location);
+            case "PumpkinDropper" -> new PumpkinDropper(location, false);
             case "ItemShop" -> new ItemShop(location);
             default -> null;
         };
@@ -78,7 +78,7 @@ public class MachineManager {
 
     public Machine newMachineByMaterial(Material material, Location location) {
         return switch (material) {
-            case Material.PUMPKIN -> new PumpkinDropper(location);
+            case Material.PUMPKIN -> new PumpkinDropper(location, true);
             case Material.BEACON -> new TorchDropper(location);
             case Material.RED_WOOL -> new BeetrootDropper(location);
             case Material.BREWING_STAND -> new Brewer(location);
@@ -88,13 +88,21 @@ public class MachineManager {
         };
     }
 
-    public void breakLocation(Location location) {
+    public boolean breakLocation(Location location) {
+        Machine toRemove = null;
         for (Machine machine : machines) {
-            if (machine.isBreakable() && machine.getLocation().distance(location) <= 1.5) {
-                machine.setBroken(true);
-                machine.onBreak();
+            if (machine.isBreakable() && machine.getLocation().getBlock().getLocation().equals(location)) {
+                machine.destroy();
+                toRemove = machine;
             }
         }
+
+        if (toRemove != null) {
+            machines.remove(toRemove);
+            return true;
+        }
+
+        return false;
     }
 
     public void addMachine(Machine machine) {

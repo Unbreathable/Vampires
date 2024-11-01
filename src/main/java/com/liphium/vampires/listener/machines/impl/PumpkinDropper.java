@@ -17,10 +17,14 @@ public class PumpkinDropper extends Machine {
 
     private final ArmorStand stand;
 
-    public PumpkinDropper(Location location) {
-        super(location, false);
+    public PumpkinDropper(Location location, boolean breakable) {
+        super(location, breakable);
 
-        stand = location.getWorld().spawn(location.clone().add(0, -1.5, 0), ArmorStand.class);
+        if (breakable) {
+            stand = location.getWorld().spawn(location.clone().add(0.5, -0.5, 0.5), ArmorStand.class);
+        } else {
+            stand = location.getWorld().spawn(location.clone().add(0, -1.5, 0), ArmorStand.class);
+        }
 
         stand.setCustomNameVisible(true);
         stand.customName(Component.text("Pumpkins", NamedTextColor.GOLD).appendSpace()
@@ -52,7 +56,12 @@ public class PumpkinDropper extends Machine {
 
                 // Drop the pumpkin where the machine is located
                 ItemStack pumpkin = new ItemStackBuilder(Material.CARVED_PUMPKIN).buildStack();
-                Item item = location.getWorld().dropItem(location, pumpkin);
+                Item item;
+                if (isBreakable()) {
+                    item = location.getWorld().dropItem(location.clone().add(0.5, 1.5, 0.5), pumpkin);
+                } else {
+                    item = location.getWorld().dropItem(location, pumpkin);
+                }
                 item.setVelocity(new Vector());
             }
         }

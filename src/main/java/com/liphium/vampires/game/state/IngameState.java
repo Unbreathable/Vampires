@@ -10,19 +10,15 @@ import com.liphium.vampires.game.team.impl.VampireTeam;
 import com.liphium.vampires.listener.machines.impl.ItemShop;
 import com.liphium.vampires.screens.ItemShopScreen;
 import com.liphium.vampires.util.LocationAPI;
-import com.liphium.vampires.util.Messages;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
@@ -35,7 +31,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,6 +39,7 @@ public class IngameState extends GameState {
     private final ParticleBuilder builder, beetroot;
 
     private final ArrayList<BeetrootData> beetroots = new ArrayList<>();
+    private final ArrayList<DroppableTrap> traps = new ArrayList<>();
 
     private Runnable runnable;
 
@@ -57,6 +53,9 @@ public class IngameState extends GameState {
     public final ArrayList<Player> infected = new ArrayList<>(), prison = new ArrayList<>();
 
     private final ArrayList<Block> torches = new ArrayList<>();
+
+    // Config
+    private int escapeDistance = 10;
 
     @Override
     public void start() {
@@ -111,6 +110,18 @@ public class IngameState extends GameState {
                     for (BeetrootData rem : toRemove) {
                         beetroots.remove(rem);
                     }
+
+                    ArrayList<DroppableTrap> trapsToRemove = new ArrayList<>();
+                    for (DroppableTrap trap : traps) {
+                        if (trap.start + 60000 <= System.currentTimeMillis()) {
+                            trap.item.remove();
+                            trapsToRemove.add(trap);
+                        }
+                    }
+
+                    for (DroppableTrap rem : trapsToRemove) {
+                        traps.remove(rem);
+                    }
                 }
             }
         });
@@ -136,27 +147,36 @@ public class IngameState extends GameState {
             return;
         }
 
-        if (event.getPlayer().getCooldown(Material.BLAZE_ROD) > 0
-                && event.getItem() != null && event.getItem().getType().equals(Material.BLAZE_ROD)) {
+        if (event.getPlayer().getCooldown(Material.STICK) > 0
+                && event.getItem() != null && event.getItem().getType().equals(Material.STICK)) {
             event.setCancelled(true);
         }
 
         if (event.getItem() != null) {
+            Team team = Vampires.getInstance().getGameManager().getTeamManager().getTeam(event.getPlayer());
             ItemStack usedItem = event.getItem();
             if (usedItem.getType().equals(Material.BEETROOT) && event.getClickedBlock() != null) {
                 beetroots.add(new BeetrootData(event.getClickedBlock().getLocation().clone().add(0.5, 1, 0.5)));
-
-                int amount = event.getPlayer().getInventory().getItemInMainHand().getAmount();
-                if (amount == 1) {
-                    event.getPlayer().getInventory().setItemInMainHand(null);
-                } else event.getPlayer().getInventory().getItemInMainHand().setAmount(amount - 1);
+                reduceMainHandItem(event.getPlayer());
+            } else if (usedItem.getType().equals(Material.REDSTONE_TORCH) && event.getClickedBlock() != null) {
+                traps.add(new SlowTrap(event.getClickedBlock().getLocation().clone().add(0.5, 1, 0.5), team));
+                reduceMainHandItem(event.getPlayer());
+            } else if (usedItem.getType().equals(Material.GLOWSTONE_DUST) && event.getClickedBlock() != null) {
+                traps.add(new GlowTrap(event.getClickedBlock().getLocation().clone().add(0.5, 1, 0.5), team));
+                reduceMainHandItem(event.getPlayer());
             } else if (usedItem.getType().equals(Material.FEATHER) && event.getPlayer().getCooldown(Material.FEATHER) <= 0) {
-
                 event.getPlayer().setVelocity(event.getPlayer().getLocation().getDirection().normalize().multiply(event.getPlayer().isOnGround() ? 1.8 : 1.1));
                 event.getPlayer().setCooldown(Material.FEATHER, 50);
                 ItemShopScreen.removeAmountFromInventory(event.getPlayer(), Material.FEATHER, 1);
             }
         }
+    }
+
+    void reduceMainHandItem(Player player) {
+        int amount = player.getInventory().getItemInMainHand().getAmount();
+        if (amount == 1) {
+            player.getInventory().setItemInMainHand(null);
+        } else player.getInventory().getItemInMainHand().setAmount(amount - 1);
     }
 
     @Override
@@ -212,7 +232,33 @@ public class IngameState extends GameState {
                 beetroots.remove(rem);
             }
 
+        } else if (team instanceof HumanTeam) {
+            final var cell = Objects.requireNonNull(LocationAPI.getLocation("Cell"));
+            if (prison.contains(event.getPlayer()) && event.getPlayer().getLocation().distance(cell) >= escapeDistance) {
+                prison.remove(event.getPlayer());
+                Bukkit.broadcast(Component.text(" "));
+                Bukkit.broadcast(Component.text("    §c" + event.getPlayer().getName() + " §c§lescaped §7the cell!"));
+                Bukkit.broadcast(Component.text(" "));
+                team.giveKit(event.getPlayer());
+            }
         }
+
+
+        ArrayList<DroppableTrap> toRemove = new ArrayList<>();
+
+        for (DroppableTrap trap : traps) {
+            if (trap.location.distance(event.getPlayer().getLocation()) <= 3 && !team.getName().equals(trap.team.getName())) {
+                toRemove.add(trap);
+                trap.onEnter(event.getPlayer());
+                break;
+            }
+        }
+
+        for (DroppableTrap rem : toRemove) {
+            rem.item.remove();
+            traps.remove(rem);
+        }
+
     }
 
     @Override
@@ -220,7 +266,7 @@ public class IngameState extends GameState {
         if (event.getEntity() instanceof Player player) {
             Team team = Vampires.getInstance().getGameManager().getTeamManager().getTeam(player);
 
-            if (team.getName().equals("Humans")) {
+            if (team instanceof HumanTeam) {
                 event.setDamage(0);
             }
         } else event.setCancelled(true);
@@ -233,26 +279,20 @@ public class IngameState extends GameState {
             Team team = Vampires.getInstance().getGameManager().getTeamManager().getTeam(damager);
             Team playerTeam = Vampires.getInstance().getGameManager().getTeamManager().getTeam(player);
 
-            if (damager.getCooldown(Material.BLAZE_ROD) > 0) {
+            final var heldItemMaterial = damager.getInventory().getItemInMainHand().getType();
+            if (damager.getCooldown(heldItemMaterial) > 0) {
                 event.setCancelled(true);
+                return;
             }
 
-            if (team instanceof VampireTeam && damager.getInventory().getItemInMainHand().getType().equals(Material.BLAZE_ROD)
-                    && damager.getCooldown(Material.BLAZE_ROD) <= 0
+            if (team instanceof VampireTeam && damager.getInventory().getItemInMainHand().getType().equals(Material.STICK)
+                    && damager.getCooldown(Material.STICK) <= 0
                     && playerTeam instanceof HumanTeam) {
 
-                damager.setCooldown(Material.BLAZE_ROD, 400);
+                damager.setCooldown(Material.STICK, 400);
 
                 if (infected.contains(player)) {
-                    infected.remove(player);
-                    player.teleport(Objects.requireNonNull(LocationAPI.getLocation("Cell")));
-
-                    Bukkit.broadcast(Component.text(" "));
-                    Bukkit.broadcast(Component.text("    §c" + player.getName() + " §7was §c§lcaught§7!"));
-                    Bukkit.broadcast(Component.text(" "));
-
-                    prison.add(player);
-
+                    sendToPrison(player);
                     return;
                 }
 
@@ -262,15 +302,31 @@ public class IngameState extends GameState {
         }
     }
 
+    void sendToPrison(Player player) {
+        player.getInventory().clear();
+        player.teleport(Objects.requireNonNull(LocationAPI.getLocation("Cell")));
+
+        Bukkit.broadcast(Component.text(" "));
+        Bukkit.broadcast(Component.text("    §c" + player.getName() + " §7was §c§lcaught§7!"));
+        Bukkit.broadcast(Component.text(" "));
+
+        prison.add(player);
+        infected.remove(player);
+    }
+
     @Override
     public void onPlace(BlockPlaceEvent event) {
+        if (event.getBlockPlaced().getType().equals(Material.REDSTONE_TORCH)) {
+            event.setCancelled(true);
+            return;
+        }
+
         if (event.getBlockPlaced().getType().equals(Material.TORCH)) {
             torches.add(event.getBlockPlaced());
         }
 
         // Place a machine if it is one
-        final var betterLoc = event.getBlockPlaced().getLocation().clone().add(0.5, 1, 0.5);
-        final var machine = Vampires.getInstance().getMachineManager().newMachineByMaterial(event.getBlockPlaced().getType(), betterLoc);
+        final var machine = Vampires.getInstance().getMachineManager().newMachineByMaterial(event.getBlockPlaced().getType(), event.getBlockPlaced().getLocation());
         if (machine != null) {
             Vampires.getInstance().getMachineManager().addMachine(machine);
         }
@@ -286,15 +342,20 @@ public class IngameState extends GameState {
             return;
         }
 
+        if (Vampires.getInstance().getMachineManager().breakLocation(event.getBlock().getLocation())) {
+            event.setDropItems(false);
+            return;
+        }
+
         event.setCancelled(!breakableBlocks.contains(event.getBlock().getType()));
     }
 
     @Override
     public void onDeath(PlayerDeathEvent event) {
-        handleDeath(event.getEntity());
-        event.setDeathMessage(null);
         event.setKeepInventory(true);
+        event.setDeathMessage(null);
         event.setKeepLevel(true);
+        handleDeath(event.getEntity());
     }
 
     @Override
@@ -302,9 +363,9 @@ public class IngameState extends GameState {
         player.setGameMode(GameMode.SPECTATOR);
 
         if (player.getKiller() != null) {
-            Bukkit.broadcastMessage(Vampires.PREFIX + "§c" + player.getName() + " §7wurde von §c§l" + player.getKiller().getName() + " §7getötet!");
+            Bukkit.broadcastMessage(Vampires.PREFIX + "§c" + player.getName() + " §7was killed by §c§l" + player.getKiller().getName() + "§7!");
         } else
-            Bukkit.broadcastMessage(Vampires.PREFIX + "§c§l" + player.getKiller().getName() + " §7ist an einem niedrigen §cBlutlevel §7gestorben!");
+            Bukkit.broadcastMessage(Vampires.PREFIX + "§c§l" + player.getKiller().getName() + " §7died!");
 
         player.getInventory().clear();
         player.setHealth(20);
@@ -314,7 +375,7 @@ public class IngameState extends GameState {
         Team team = Vampires.getInstance().getGameManager().getTeamManager().getTeam(player);
         team.getPlayers().remove(player);
 
-        if (team.getPlayers().size() == 0) {
+        if (team.getPlayers().isEmpty()) {
             handleWin(Vampires.getInstance().getGameManager().getTeamManager().getTeam("Humans"));
         }
     }
@@ -350,12 +411,85 @@ public class IngameState extends GameState {
             item = (Item) location.getWorld().spawnEntity(location.clone().add(0, 1, 0), EntityType.ITEM);
             item.setItemStack(new ItemStackBuilder(Material.BEETROOT).buildStack());
             item.setVelocity(new Vector(0, 0, 0));
-            item.setPickupDelay(1000000);
+            item.setCanPlayerPickup(false);
+            item.setCanMobPickup(false);
             item.setUnlimitedLifetime(true);
             item.setCustomNameVisible(true);
-            item.customName(Component.text("Blut Knoblauch", NamedTextColor.RED, TextDecoration.BOLD));
+            item.customName(Component.text("Blood Garlic", NamedTextColor.RED, TextDecoration.BOLD));
             start = System.currentTimeMillis();
         }
 
+    }
+
+    public static abstract class DroppableTrap {
+        public final Location location;
+        public final Team team;
+        public final Item item;
+        public final long start;
+
+        public DroppableTrap(Location location, Team team, Material material) {
+            this.location = location;
+            this.team = team;
+
+            item = (Item) location.getWorld().spawnEntity(location.clone().add(0, 1, 0), EntityType.ITEM);
+            item.setItemStack(new ItemStackBuilder(material).buildStack());
+            item.setVelocity(new Vector(0, 0, 0));
+            item.setCanPlayerPickup(false);
+            item.setCanMobPickup(false);
+            item.setUnlimitedLifetime(true);
+            start = System.currentTimeMillis();
+        }
+
+        public abstract void onEnter(Player player);
+    }
+
+    public static class SlowTrap extends DroppableTrap {
+
+        SlowTrap(Location location, Team team) {
+            super(location, team, Material.REDSTONE_TORCH);
+        }
+
+        @Override
+        public void onEnter(Player player) {
+
+            // Notify all players in the team that planted the trap
+            final var x = player.getLocation().getBlockX();
+            final var y = player.getLocation().getBlockY();
+            final var z = player.getLocation().getBlockZ();
+            for (Player human : Vampires.getInstance().getGameManager().getTeamManager().getTeam("Humans").getPlayers()) {
+                human.sendMessage(Component.text(" "));
+                human.sendMessage(Component.text("     §c§l" + player.getName() + " §7walked into a slow trap."));
+                human.sendMessage(Component.text("     §7Location: §c" + x + " " + y + " " + z));
+                human.sendMessage(Component.text(" "));
+            }
+
+            // Give the player slowness
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 200, 2));
+        }
+    }
+
+    public static class GlowTrap extends DroppableTrap {
+
+        GlowTrap(Location location, Team team) {
+            super(location, team, Material.GLOWSTONE_DUST);
+        }
+
+        @Override
+        public void onEnter(Player player) {
+
+            // Notify all players in the team that planted the trap
+            final var x = player.getLocation().getBlockX();
+            final var y = player.getLocation().getBlockY();
+            final var z = player.getLocation().getBlockZ();
+            for (Player human : Vampires.getInstance().getGameManager().getTeamManager().getTeam("Humans").getPlayers()) {
+                human.sendMessage(Component.text(" "));
+                human.sendMessage(Component.text("     §c§l" + player.getName() + " §7walked into a glow trap."));
+                human.sendMessage(Component.text("     §7Location: §c" + x + " " + y + " " + z));
+                human.sendMessage(Component.text(" "));
+            }
+
+            // Give the player slowness
+            player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 300, 0));
+        }
     }
 }

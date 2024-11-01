@@ -17,9 +17,9 @@ public class GoldenAppleDropper extends Machine {
     private final ArmorStand stand;
 
     public GoldenAppleDropper(Location location) {
-        super(location, false);
+        super(location, true);
 
-        stand = location.getWorld().spawn(location.clone().add(0, -1.5, 0), ArmorStand.class);
+        stand = location.getWorld().spawn(location.clone().add(0.5, -0.5, 0.5), ArmorStand.class);
 
         stand.setCustomNameVisible(true);
         stand.customName(Component.text("Golden apples", NamedTextColor.GOLD).appendSpace()
@@ -51,7 +51,7 @@ public class GoldenAppleDropper extends Machine {
 
                 // Drop the pumpkin where the machine is located
                 ItemStack pumpkin = new ItemStackBuilder(Material.GOLDEN_APPLE).buildStack();
-                Item item = location.getWorld().dropItem(location, pumpkin);
+                Item item = location.getWorld().dropItem(location.clone().add(0.5, 1.5, 0.5), pumpkin);
                 item.setVelocity(new Vector());
             }
         }

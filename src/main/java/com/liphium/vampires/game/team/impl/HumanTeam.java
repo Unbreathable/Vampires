@@ -32,7 +32,7 @@ public class HumanTeam extends Team {
         player.getInventory().setBoots(new ItemStackBuilder(Material.LEATHER_BOOTS).makeUnbreakable()
                 .withLeatherColor(Color.GREEN).buildStack());
 
-        player.getInventory().addItem(new ItemStackBuilder(Material.DIAMOND_SWORD).makeUnbreakable().buildStack());
+        player.getInventory().addItem(new ItemStackBuilder(Material.STONE_SWORD).makeUnbreakable().buildStack());
 
         player.teleport(Objects.requireNonNull(LocationAPI.getLocation("Camp")));
     }
@@ -55,7 +55,7 @@ public class HumanTeam extends Team {
     public void handleWin() {
 
         Bukkit.broadcast(Component.text(" "));
-        Bukkit.broadcast(Component.text("   §cThe §a§lhumans §7won the §agame§7!"));
+        Bukkit.broadcast(Component.text("   §aThe §a§lhumans §7won the §agame§7!"));
         Bukkit.broadcast(Component.text(" "));
         Bukkit.broadcast(Component.text("§7The world has been §asaved §7by the §ahumans"));
         Bukkit.broadcast(Component.text("§7and can §aexist §7for another day."));

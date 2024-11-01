@@ -17,9 +17,9 @@ public class TorchDropper extends Machine {
     private final ArmorStand stand;
 
     public TorchDropper(Location location) {
-        super(location, false);
+        super(location, true);
 
-        stand = location.getWorld().spawn(location.clone().add(0, -1.5, 0), ArmorStand.class);
+        stand = location.getWorld().spawn(location.clone().add(0.5, -0.5, 0.5), ArmorStand.class);
 
         stand.setCustomNameVisible(true);
         stand.customName(Component.text("Torches", NamedTextColor.GOLD).appendSpace()
@@ -46,7 +46,7 @@ public class TorchDropper extends Machine {
                     .append(Component.text("..", NamedTextColor.GRAY)));
             if (count == 0) {
                 count = 11;
-                Item item = location.getWorld().dropItem(location, new ItemStack(Material.TORCH));
+                Item item = location.getWorld().dropItem(location.clone().add(0.5, 1.5, 0.5), new ItemStack(Material.TORCH));
                 item.setVelocity(new Vector());
             }
         }
