@@ -19,6 +19,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.time.Duration;
@@ -146,6 +147,11 @@ public class LobbyState extends GameState {
         if (event.getItem() != null && event.getItem().getType().equals(Material.SADDLE)) {
             Core.getInstance().getScreens().open(event.getPlayer(), 1);
         }
+    }
+
+    @Override
+    public void onInteractAtEntity(PlayerInteractAtEntityEvent event) {
+        event.setCancelled(event.getPlayer().getGameMode() != GameMode.CREATIVE);
     }
 
     @Override

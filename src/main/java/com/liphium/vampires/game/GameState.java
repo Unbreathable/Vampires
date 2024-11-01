@@ -3,10 +3,7 @@ package com.liphium.vampires.game;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.FireworkExplodeEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -54,6 +51,9 @@ public abstract class GameState {
     }
 
     public void onBreak(BlockBreakEvent event) {
+    }
+
+    public void onSpawn(EntitySpawnEvent event) {
     }
 
     public void onFirework(FireworkExplodeEvent event) {

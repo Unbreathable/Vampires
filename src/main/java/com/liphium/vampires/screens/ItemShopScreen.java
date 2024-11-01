@@ -1,5 +1,6 @@
 package com.liphium.vampires.screens;
 
+import com.liphium.core.Core;
 import com.liphium.core.inventory.CClickEvent;
 import com.liphium.core.inventory.CItem;
 import com.liphium.core.inventory.CScreen;
@@ -27,16 +28,23 @@ public class ItemShopScreen extends CScreen {
     public void init(Player player, Inventory inventory) {
         background(player);
 
+        // Add the right categories for the player
+        List<ShopCategory> toOpen;
+        if (Vampires.getInstance().getGameManager().getTeamManager().getTeam(player).getName().equals("Vampires")) {
+            toOpen = List.of(ShopCategory.VAMPIRES, ShopCategory.TOOLS, ShopCategory.BUILDING);
+        } else {
+            toOpen = List.of(ShopCategory.HUMANS, ShopCategory.VAMPIRES, ShopCategory.TOOLS, ShopCategory.BUILDING);
+        }
+
         // Add all the categories
-        for (int i = 0; i < ShopCategory.values().length; i++) {
+        for (int i = 0; i < toOpen.size(); i++) {
             int finalI = i;
-            setItemNotCached(player, 10 + i, new CItem(ShopCategory.values()[i].getStack())
-                    .onClick(event -> openCategory(event, finalI, inventory)));
+            setItemNotCached(player, 10 + i, new CItem(toOpen.get(i).getStack())
+                    .onClick(event -> openCategory(event, toOpen.get(finalI), inventory)));
         }
     }
 
-    public void openCategory(CClickEvent event, int id, Inventory inventory) {
-        final ShopCategory category = ShopCategory.values()[id];
+    public void openCategory(CClickEvent event, ShopCategory category, Inventory inventory) {
         for (int i = 0; i < 9; i++) {
             if (category.getItems().size() <= i) {
                 setItemNotCached(event.getPlayer(), 18 + i, ShopCategory.spacer(), inventory);
@@ -52,9 +60,7 @@ public class ItemShopScreen extends CScreen {
             if (item != null && item.getType() == material) {
                 int sub = Math.min(item.getAmount(), count);
                 int newAmount = item.getAmount() - sub;
-                if (newAmount == 0) {
-                    item.setAmount(newAmount);
-                }
+                item.setAmount(newAmount);
                 count -= sub;
                 if (count <= 0) {
                     break;
@@ -63,7 +69,7 @@ public class ItemShopScreen extends CScreen {
         }
     }
 
-    enum ShopCategory {
+    public enum ShopCategory {
         VAMPIRES(
                 new ItemStackBuilder(Material.REDSTONE)
                         .withName(Component.text("Vampires", NamedTextColor.RED, TextDecoration.BOLD))
@@ -77,8 +83,8 @@ public class ItemShopScreen extends CScreen {
                         itemWithPrice(Material.IRON_INGOT, "Iron ingot", NamedTextColor.RED, 3, 1),
                         itemWithPrice(Material.DIAMOND, "Diamond", NamedTextColor.RED, 7, 1),
                         spacer(),
-                        itemWithPrice(Material.GOLDEN_APPLE, "Golden apple dropper", NamedTextColor.RED, 20, 1),
-                        itemWithPrice(Material.FIREWORK_ROCKET, "Rocket dropper", NamedTextColor.RED, 30, 1)
+                        itemWithPrice(Material.GOLD_BLOCK, "Golden apple dropper", NamedTextColor.RED, 20, 1),
+                        itemWithPrice(Material.REDSTONE_LAMP, "Rocket dropper", NamedTextColor.RED, 30, 1)
                 )
         ),
         HUMANS(
@@ -93,8 +99,8 @@ public class ItemShopScreen extends CScreen {
                         itemWithPrice(Material.DIAMOND, "Diamond", NamedTextColor.GREEN, 10, 1),
                         itemWithPrice(Material.MACE, "Mace", NamedTextColor.WHITE, 25, 1),
                         spacer(),
-                        itemWithPrice(Material.BEETROOT, "Blood garlic dropper", NamedTextColor.GREEN, 20, 1),
-                        itemWithPrice(Material.TORCH, "Torch dropper", NamedTextColor.GREEN, 30, 1)
+                        itemWithPrice(Material.RED_WOOL, "Blood garlic dropper", NamedTextColor.GREEN, 20, 1),
+                        itemWithPrice(Material.BEACON, "Torch dropper", NamedTextColor.GREEN, 30, 1)
                 )
         ),
         TOOLS(
@@ -119,7 +125,7 @@ public class ItemShopScreen extends CScreen {
                         .withLore(Component.text("Upgrade your base.", NamedTextColor.GRAY))
                         .buildStack(),
                 List.of(
-                        itemWithPrice(Material.CARVED_PUMPKIN, "Pumpkin dropper", NamedTextColor.GOLD, 5, 1),
+                        itemWithPrice(Material.PUMPKIN, "Pumpkin dropper", NamedTextColor.GOLD, 5, 1),
                         itemWithPrice(Material.BREWING_STAND, "Brewer", NamedTextColor.GOLD, 50, 1),
                         itemWithPrice(Material.ARMOR_STAND, "Pop-up item shop", NamedTextColor.GOLD, 50, 1),
                         spacer(),

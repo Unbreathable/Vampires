@@ -15,6 +15,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 
 import java.time.Duration;
+import java.util.Objects;
 
 
 public class HumanTeam extends Team {
@@ -33,7 +34,7 @@ public class HumanTeam extends Team {
 
         player.getInventory().addItem(new ItemStackBuilder(Material.DIAMOND_SWORD).makeUnbreakable().buildStack());
 
-        player.teleport(LocationAPI.getLocation("Camp"));
+        player.teleport(Objects.requireNonNull(LocationAPI.getLocation("Camp")));
     }
 
     @Override
@@ -41,10 +42,10 @@ public class HumanTeam extends Team {
         for (Player player : getPlayers()) {
 
             player.sendMessage(" ");
-            player.sendMessage("    §7Du bist ein §c§lMensch§7!");
+            player.sendMessage("    §7You are a §c§lhuman§7!");
             player.sendMessage(" ");
-            player.sendMessage("§7Verteidige das §cCamp §7vor den §c§lVampiren");
-            player.sendMessage("§7oder §celiminiere §7alle §c§lVampire§7.");
+            player.sendMessage("§7Eliminate all §cvampires §7and free your");
+            player.sendMessage("§cimprisoned §7comrads.");
             player.sendMessage(" ");
 
         }
@@ -54,25 +55,15 @@ public class HumanTeam extends Team {
     public void handleWin() {
 
         Bukkit.broadcast(Component.text(" "));
-        Bukkit.broadcast(Component.text("   Die ", NamedTextColor.GREEN)
-                .append(Component.text("Menschen", NamedTextColor.GREEN, TextDecoration.BOLD))
-                .append(Component.text(" haben ", NamedTextColor.GRAY))
-                .append(Component.text("gewonnen", NamedTextColor.GREEN))
-                .append(Component.text("!", NamedTextColor.GRAY)));
+        Bukkit.broadcast(Component.text("   §cThe §a§lhumans §7won the §agame§7!"));
         Bukkit.broadcast(Component.text(" "));
-        Bukkit.broadcast(Component.text("Die ", NamedTextColor.GRAY)
-                .append(Component.text("Welt", NamedTextColor.GREEN))
-                .append(Component.text(" wurde von den ", NamedTextColor.GRAY))
-                .append(Component.text("Menschen", NamedTextColor.GREEN))
-                .append(Component.text(" gesichert", NamedTextColor.GRAY)));
-        Bukkit.broadcast(Component.text("und kann weiter ", NamedTextColor.GRAY)
-                .append(Component.text("friedlich", NamedTextColor.GREEN))
-                .append(Component.text(" existieren!", NamedTextColor.GRAY)));
+        Bukkit.broadcast(Component.text("§7The world has been §asaved §7by the §ahumans"));
+        Bukkit.broadcast(Component.text("§7and can §aexist §7for another day."));
         Bukkit.broadcast(Component.text(" "));
 
         for (Player player : getPlayers()) {
             player.showTitle(Title.title(
-                    Component.text("Sieg", NamedTextColor.GREEN, TextDecoration.BOLD),
+                    Component.text("Victory Royale", NamedTextColor.GREEN, TextDecoration.BOLD),
                     Component.empty(),
                     Title.Times.times(Duration.ofSeconds(1), Duration.ofSeconds(3), Duration.ofSeconds(1))
             ));
@@ -82,7 +73,7 @@ public class HumanTeam extends Team {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (!getPlayers().contains(player)) {
                 player.showTitle(Title.title(
-                        Component.text("Verloren", NamedTextColor.RED, TextDecoration.BOLD),
+                        Component.text("Game Over", NamedTextColor.RED, TextDecoration.BOLD),
                         Component.empty(),
                         Title.Times.times(Duration.ofSeconds(1), Duration.ofSeconds(3), Duration.ofSeconds(1))
                 ));

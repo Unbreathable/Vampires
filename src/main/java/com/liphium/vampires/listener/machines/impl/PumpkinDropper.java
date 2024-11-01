@@ -5,6 +5,7 @@ import com.liphium.vampires.listener.machines.Machine;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -47,7 +48,7 @@ public class PumpkinDropper extends Machine {
             );
 
             if (count == 0) {
-                count = 20;
+                count = computeCount();
 
                 // Drop the pumpkin where the machine is located
                 ItemStack pumpkin = new ItemStackBuilder(Material.CARVED_PUMPKIN).buildStack();
@@ -55,6 +56,10 @@ public class PumpkinDropper extends Machine {
                 item.setVelocity(new Vector());
             }
         }
+    }
+
+    int computeCount() {
+        return Math.max(17 - Bukkit.getOnlinePlayers().size(), 5);
     }
 
     @Override

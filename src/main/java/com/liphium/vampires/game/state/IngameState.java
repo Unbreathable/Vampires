@@ -7,8 +7,10 @@ import com.liphium.vampires.game.GameState;
 import com.liphium.vampires.game.team.Team;
 import com.liphium.vampires.game.team.impl.HumanTeam;
 import com.liphium.vampires.game.team.impl.VampireTeam;
+import com.liphium.vampires.listener.machines.impl.ItemShop;
 import com.liphium.vampires.screens.ItemShopScreen;
 import com.liphium.vampires.util.LocationAPI;
+import com.liphium.vampires.util.Messages;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -16,15 +18,14 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.FireworkExplodeEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -34,6 +35,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 public class IngameState extends GameState {
 
@@ -57,7 +61,7 @@ public class IngameState extends GameState {
     @Override
     public void start() {
 
-        LocationAPI.getLocation("Camp").getWorld().setDifficulty(Difficulty.HARD);
+        Objects.requireNonNull(LocationAPI.getLocation("Camp")).getWorld().setDifficulty(Difficulty.HARD);
 
         for (Team team : Vampires.getInstance().getGameManager().getTeamManager().getTeams()) {
             team.sendStartMessage();
@@ -84,7 +88,7 @@ public class IngameState extends GameState {
                     }
 
                     for (Player player : infected) {
-                        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§7Du bist §c§linfiziert§7!"));
+                        player.sendActionBar(Component.text("§7You are §c§linfected§7!"));
 
                         for (Player all : Bukkit.getOnlinePlayers()) {
                             builder.renderPoint(all, player.getLocation().clone().add(0, 2.6, 0));
@@ -112,9 +116,25 @@ public class IngameState extends GameState {
         });
     }
 
+    private boolean placeItemShop = false;
+
+    @Override
+    public void onSpawn(EntitySpawnEvent event) {
+        if (event.getEntityType() == EntityType.ARMOR_STAND && placeItemShop) {
+            final var itemShop = new ItemShop((ArmorStand) event.getEntity());
+            Vampires.getInstance().getMachineManager().addMachine(itemShop);
+            placeItemShop = false;
+        }
+    }
+
     @Override
     public void onInteract(PlayerInteractEvent event) {
         Vampires.getInstance().getMachineManager().onInteract(event);
+
+        if (event.getClickedBlock() != null && event.getItem() != null && event.getItem().getType().equals(Material.ARMOR_STAND)) {
+            placeItemShop = true;
+            return;
+        }
 
         if (event.getPlayer().getCooldown(Material.BLAZE_ROD) > 0
                 && event.getItem() != null && event.getItem().getType().equals(Material.BLAZE_ROD)) {
@@ -146,16 +166,6 @@ public class IngameState extends GameState {
         if (event.getRightClicked().getType().equals(EntityType.ARMOR_STAND)) {
             event.setCancelled(true);
         }
-    }
-
-    @Override
-    public void onPlace(BlockPlaceEvent event) {
-        if (event.getBlockPlaced().getType().equals(Material.TORCH)) {
-            torches.add(event.getBlockPlaced());
-            return;
-        }
-
-        event.setCancelled(true);
     }
 
     @Override
@@ -235,13 +245,11 @@ public class IngameState extends GameState {
 
                 if (infected.contains(player)) {
                     infected.remove(player);
-                    player.teleport(LocationAPI.getLocation("Cell"));
+                    player.teleport(Objects.requireNonNull(LocationAPI.getLocation("Cell")));
 
-                    Bukkit.broadcastMessage(" ");
-                    Bukkit.broadcastMessage("    §c" + player.getName() + " §7wurde §c§lgefangen§7!");
-                    Bukkit.broadcastMessage("§7Ihm wird das §cBlut §7abgesaugt und");
-                    Bukkit.broadcastMessage("§7die §cVampire §7werden §c§lstärker§7!");
-                    Bukkit.broadcastMessage(" ");
+                    Bukkit.broadcast(Component.text(" "));
+                    Bukkit.broadcast(Component.text("    §c" + player.getName() + " §7was §c§lcaught§7!"));
+                    Bukkit.broadcast(Component.text(" "));
 
                     prison.add(player);
 
@@ -249,10 +257,26 @@ public class IngameState extends GameState {
                 }
 
                 infected.add(player);
-                Bukkit.broadcastMessage(Vampires.PREFIX + "§c" + player.getName() + " §7wurde §c§linfiniziert§7!");
+                Bukkit.broadcast(Vampires.PREFIX.append(Component.text("§c" + player.getName() + " §7was §c§linfected§7!")));
             }
         }
     }
+
+    @Override
+    public void onPlace(BlockPlaceEvent event) {
+        if (event.getBlockPlaced().getType().equals(Material.TORCH)) {
+            torches.add(event.getBlockPlaced());
+        }
+
+        // Place a machine if it is one
+        final var betterLoc = event.getBlockPlaced().getLocation().clone().add(0.5, 1, 0.5);
+        final var machine = Vampires.getInstance().getMachineManager().newMachineByMaterial(event.getBlockPlaced().getType(), betterLoc);
+        if (machine != null) {
+            Vampires.getInstance().getMachineManager().addMachine(machine);
+        }
+    }
+
+    final List<Material> breakableBlocks = List.of(Material.DIRT, Material.GRASS_BLOCK, Material.SHORT_GRASS, Material.TALL_GRASS);
 
     @Override
     public void onBreak(BlockBreakEvent event) {
@@ -262,7 +286,7 @@ public class IngameState extends GameState {
             return;
         }
 
-        event.setCancelled(true);
+        event.setCancelled(!breakableBlocks.contains(event.getBlock().getType()));
     }
 
     @Override

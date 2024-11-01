@@ -10,8 +10,10 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.util.Vector;
 
 public class RocketDropper extends Machine {
 
@@ -56,7 +58,8 @@ public class RocketDropper extends Machine {
                 meta.addEffect(FireworkEffect.builder().withColor(Color.RED).build());
                 rocket.setItemMeta(meta);
 
-                location.getWorld().dropItem(location, rocket);
+                Item item = location.getWorld().dropItem(location, rocket);
+                item.setVelocity(new Vector());
             }
         }
     }

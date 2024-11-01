@@ -12,17 +12,17 @@ import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-public class TorchDropper extends Machine {
+public class GoldenAppleDropper extends Machine {
 
     private final ArmorStand stand;
 
-    public TorchDropper(Location location) {
+    public GoldenAppleDropper(Location location) {
         super(location, false);
 
         stand = location.getWorld().spawn(location.clone().add(0, -1.5, 0), ArmorStand.class);
 
         stand.setCustomNameVisible(true);
-        stand.customName(Component.text("Torches", NamedTextColor.GOLD).appendSpace()
+        stand.customName(Component.text("Golden apples", NamedTextColor.GOLD).appendSpace()
                 .append(Component.text("are produced here.", NamedTextColor.GRAY)));
         stand.setGravity(false);
         stand.setInvisible(true);
@@ -30,7 +30,7 @@ public class TorchDropper extends Machine {
         stand.setRemoveWhenFarAway(false);
     }
 
-    int count = 3, tickCount = 0;
+    int count = 20, tickCount = 0;
 
     @Override
     public void tick() {
@@ -40,13 +40,18 @@ public class TorchDropper extends Machine {
             tickCount = 0;
 
             count--;
-            stand.customName(Component.text("Torch", NamedTextColor.GOLD).appendSpace()
-                    .append(Component.text("in", NamedTextColor.GRAY)).appendSpace()
-                    .append(Component.text(count, NamedTextColor.GOLD, TextDecoration.BOLD)).appendSpace()
-                    .append(Component.text("..", NamedTextColor.GRAY)));
+            stand.customName(Component.text("Golden apple ", NamedTextColor.GOLD)
+                    .append(Component.text("in ", NamedTextColor.GRAY))
+                    .append(Component.text(count, NamedTextColor.GOLD, TextDecoration.BOLD))
+                    .append(Component.text("..", NamedTextColor.GRAY))
+            );
+
             if (count == 0) {
-                count = 11;
-                Item item = location.getWorld().dropItem(location, new ItemStack(Material.TORCH));
+                count = 20;
+
+                // Drop the pumpkin where the machine is located
+                ItemStack pumpkin = new ItemStackBuilder(Material.GOLDEN_APPLE).buildStack();
+                Item item = location.getWorld().dropItem(location, pumpkin);
                 item.setVelocity(new Vector());
             }
         }

@@ -66,7 +66,10 @@ public class GameListener implements Listener {
                 || event.getEntityType().equals(EntityType.FIREWORK_ROCKET)
                 || event.getEntityType().equals(EntityType.ARMOR_STAND)
                 || event.getEntityType().equals(EntityType.POTION)
-                || event.getEntityType().equals(EntityType.AREA_EFFECT_CLOUD)) return;
+                || event.getEntityType().equals(EntityType.AREA_EFFECT_CLOUD)) {
+            Vampires.getInstance().getGameManager().getCurrentState().onSpawn(event);
+            return;
+        }
         event.setCancelled(true);
     }
 

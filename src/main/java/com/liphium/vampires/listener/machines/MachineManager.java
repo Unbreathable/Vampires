@@ -3,6 +3,7 @@ package com.liphium.vampires.listener.machines;
 import com.liphium.vampires.listener.machines.impl.*;
 import com.liphium.vampires.util.LocationAPI;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -19,6 +20,7 @@ public class MachineManager {
         // Add all machines (all the ones that can be spawned by location)
         registered.add("PumpkinDropper");
         registered.add("RespawnBeacon");
+        registered.add("ItemShop");
 
         for (String s : registered) {
             for (int i = 1; i <= 1000; i++) {
@@ -69,17 +71,19 @@ public class MachineManager {
     public Machine newMachineByLocation(String name, Location location) {
         return switch (name) {
             case "PumpkinDropper" -> new PumpkinDropper(location);
-            case "RespawnBeacon" -> new RocketDropper(location);
+            case "ItemShop" -> new ItemShop(location);
             default -> null;
         };
     }
 
-    public Machine newMachineByItemName(String name, Location location) {
-        return switch (name) {
-            case "RocketDropper" -> new RocketDropper(location);
-            case "TorchDropper" -> new TorchDropper(location);
-            case "BeetrootDropper" -> new BeetrootDropper(location);
-            case "Brewer" -> new Brewer(location);
+    public Machine newMachineByMaterial(Material material, Location location) {
+        return switch (material) {
+            case Material.PUMPKIN -> new PumpkinDropper(location);
+            case Material.BEACON -> new TorchDropper(location);
+            case Material.RED_WOOL -> new BeetrootDropper(location);
+            case Material.BREWING_STAND -> new Brewer(location);
+            case Material.REDSTONE_LAMP -> new RocketDropper(location);
+            case Material.GOLD_BLOCK -> new GoldenAppleDropper(location);
             default -> null;
         };
     }
@@ -91,6 +95,10 @@ public class MachineManager {
                 machine.onBreak();
             }
         }
+    }
+
+    public void addMachine(Machine machine) {
+        machines.add(machine);
     }
 
     public void tick() {
