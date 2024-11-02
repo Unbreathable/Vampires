@@ -10,7 +10,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
-import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -168,6 +167,18 @@ public class LobbyState extends GameState {
                 .withLore(Component.text("§7§oJoin a team.")).buildStack());
 
         player.teleport(LocationAPI.getLocation("Camp"));
+
+        Vampires.getInstance().getTaskManager().inject(new Runnable() {
+            int ticks = 0;
+
+            @Override
+            public void run() {
+                if (ticks++ >= 10) {
+                    player.teleport(LocationAPI.getLocation("Camp"));
+                    Vampires.getInstance().getTaskManager().uninject(this);
+                }
+            }
+        });
     }
 
     @Override

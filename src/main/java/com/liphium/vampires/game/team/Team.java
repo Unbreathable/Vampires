@@ -58,7 +58,7 @@ public class Team {
         return Vampires.getInstance().getGameManager().getMaxTeamSize() > getPlayers().size();
     }
 
-    public void giveKit(Player player) {
+    public void giveKit(Player player, boolean teleport) {
     }
 
     public void tick() {

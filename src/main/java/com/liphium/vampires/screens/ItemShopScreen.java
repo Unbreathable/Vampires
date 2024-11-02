@@ -33,7 +33,7 @@ public class ItemShopScreen extends CScreen {
         if (Vampires.getInstance().getGameManager().getTeamManager().getTeam(player).getName().equals("Vampires")) {
             toOpen = List.of(ShopCategory.VAMPIRES, ShopCategory.TOOLS, ShopCategory.BUILDING);
         } else {
-            toOpen = List.of(ShopCategory.HUMANS, ShopCategory.VAMPIRES, ShopCategory.TOOLS, ShopCategory.BUILDING);
+            toOpen = List.of(ShopCategory.HUMANS, ShopCategory.TOOLS, ShopCategory.BUILDING);
         }
 
         // Add all the categories
@@ -98,8 +98,8 @@ public class ItemShopScreen extends CScreen {
                         itemWithPrice(Material.DIAMOND, "Diamond", NamedTextColor.GREEN, 10, 1),
                         itemWithPrice(Material.MACE, "Mace", NamedTextColor.WHITE, 25, 1),
                         spacer(),
-                        itemWithPrice(Material.RED_WOOL, "Blood Garlic dropper", NamedTextColor.GREEN, 20, 1),
-                        itemWithPrice(Material.BEACON, "Torch dropper", NamedTextColor.GREEN, 30, 1)
+                        itemWithPrice(Material.RED_WOOL, "Blood Garlic dropper", NamedTextColor.GREEN, 40, 1),
+                        itemWithPrice(Material.BEACON, "Torch dropper", NamedTextColor.GREEN, 50, 1)
                 )
         ),
         TOOLS(
@@ -114,8 +114,8 @@ public class ItemShopScreen extends CScreen {
                                         .withName(Component.text("Golden shovel", NamedTextColor.WHITE))
                                         .withEnchantments(Map.of(Enchantment.EFFICIENCY, 2))
                                         .buildStack()
-                        ),
-                        itemWithPrice(Material.WIND_CHARGE, "Wind charge", NamedTextColor.WHITE, 20, 5)
+                        )
+                        //itemWithPrice(Material.WIND_CHARGE, "Wind charge", NamedTextColor.WHITE, 20, 5)
                 )
         ),
         BUILDING(
@@ -124,12 +124,12 @@ public class ItemShopScreen extends CScreen {
                         .withLore(Component.text("Upgrade your base.", NamedTextColor.GRAY))
                         .buildStack(),
                 List.of(
-                        itemWithPrice(Material.PUMPKIN, "Pumpkin dropper", NamedTextColor.GOLD, 5, 1),
-                        itemWithPrice(Material.BREWING_STAND, "Brewer", NamedTextColor.GOLD, 50, 1),
+                        itemWithPrice(Material.PUMPKIN, "Pumpkin dropper", NamedTextColor.GOLD, 25, 1),
+                        itemWithPrice(Material.BREWING_STAND, "Brewer", NamedTextColor.GOLD, 100, 1),
                         itemWithPrice(Material.ARMOR_STAND, "Pop-up item shop", NamedTextColor.GOLD, 50, 1),
                         spacer(),
-                        itemWithPrice(Material.REDSTONE_TORCH, "Alarm trap", NamedTextColor.GOLD, 5, 1),
-                        itemWithPrice(Material.GLOWSTONE_DUST, "Glow trap", NamedTextColor.GOLD, 10, 1)
+                        itemWithPrice(Material.TRIPWIRE_HOOK, "Alarm trap", NamedTextColor.GOLD, 20, 1),
+                        itemWithPrice(Material.GLOWSTONE_DUST, "Glow trap", NamedTextColor.GOLD, 30, 1)
                 )
         );
 

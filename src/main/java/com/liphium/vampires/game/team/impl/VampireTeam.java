@@ -27,7 +27,7 @@ public class VampireTeam extends Team {
     }
 
     @Override
-    public void giveKit(Player player) {
+    public void giveKit(Player player, boolean teleport) {
         player.getInventory().setBoots(new ItemStackBuilder(Material.LEATHER_BOOTS).makeUnbreakable()
                 .withLeatherColor(Color.RED).buildStack());
         player.getInventory().setHelmet(new ItemStackBuilder(Material.LEATHER_HELMET).makeUnbreakable()
@@ -56,7 +56,9 @@ public class VampireTeam extends Team {
 
         player.getInventory().setItemInOffHand(rocket);
 
-        player.teleport(Objects.requireNonNull(LocationAPI.getLocation("Cave")));
+        if (teleport) {
+            player.teleport(Objects.requireNonNull(LocationAPI.getLocation("Cave")));
+        }
     }
 
     @Override

@@ -25,7 +25,7 @@ public class HumanTeam extends Team {
     }
 
     @Override
-    public void giveKit(Player player) {
+    public void giveKit(Player player, boolean teleport) {
         player.getInventory().setHelmet(new ItemStackBuilder(Material.NETHERITE_HELMET).makeUnbreakable()
                 .addEnchantment(Enchantment.BLAST_PROTECTION, 3).buildStack());
 
@@ -34,7 +34,9 @@ public class HumanTeam extends Team {
 
         player.getInventory().addItem(new ItemStackBuilder(Material.STONE_SWORD).makeUnbreakable().buildStack());
 
-        player.teleport(Objects.requireNonNull(LocationAPI.getLocation("Camp")));
+        if (teleport) {
+            player.teleport(Objects.requireNonNull(LocationAPI.getLocation("Camp")));
+        }
     }
 
     @Override
